@@ -51,6 +51,20 @@ export const deleteProduct = createAsyncThunk('deleteProduct',
         }
     })
 
+export const updateProduct = createAsyncThunk('updateProduct',
+    async (data, { rejectWithValue }) => {
+        try {
+            const { endpoint, productId, payload } = data
+            const res = await apiRequest.put(`${endpoint}/${productId}`, payload)
+            toast.success(res.data.message)
+            return res.data
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || error.message;
+            toast.error(errorMessage);
+            return rejectWithValue(errorMessage);
+        }
+    })
+
 const productSlice = createSlice({
     name: 'product',
     initialState,
@@ -86,9 +100,25 @@ const productSlice = createSlice({
         })
         builder.addCase(deleteProduct.fulfilled, (state, action) => {
             state.loading = false;
-            state.product = state.product.filter(product => product.id!== action.payload.data.id);
+            state.product = state.product.filter(product => product.id !== action.payload.data.id);
         })
         builder.addCase(deleteProduct.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        builder.addCase(updateProduct.pending, (state, action) => {
+            state.loading = true;
+            state.error = null;
+        })
+        builder.addCase(updateProduct.fulfilled, (state, action) => {
+            state.loading = false;
+            const updatedProduct = action.payload.data;
+            state.product = state.product.map(product =>
+                product.id === updatedProduct.id ? updatedProduct : product
+            );
+        });
+        
+        builder.addCase(updateProduct.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
         })

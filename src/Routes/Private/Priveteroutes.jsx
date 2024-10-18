@@ -6,6 +6,7 @@ import Errorpage from "../../Components/Errorpage";
 import Product from "../../Pages/Private_pages/Product";
 import { useSelector } from "react-redux";
 import SessionExpiredPopup from "../../Components/Sessionex";
+import ProductForm from "../../Pages/Private_pages/ProductForm";
 
 const PrivateRoutes = () => {
 
@@ -23,6 +24,7 @@ const PrivateRoutes = () => {
                 <Route element={<PrivateRoute />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/product" element={<Product />} />
+                    <Route path="/productform" element={<ProductForm />} />
                     <Route path="/*" element={<Errorpage />} />
                 </Route>
             </Routes>
